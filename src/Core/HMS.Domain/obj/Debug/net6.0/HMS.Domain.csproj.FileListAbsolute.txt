@@ -1,0 +1,12 @@
+C:\Users\Rhabi\OneDrive\Documents\HMS\HMS API\HMS\src\Core\HMS.Domain\bin\Debug\net6.0\HMS.Domain.deps.json
+C:\Users\Rhabi\OneDrive\Documents\HMS\HMS API\HMS\src\Core\HMS.Domain\bin\Debug\net6.0\HMS.Domain.dll
+C:\Users\Rhabi\OneDrive\Documents\HMS\HMS API\HMS\src\Core\HMS.Domain\bin\Debug\net6.0\HMS.Domain.pdb
+C:\Users\Rhabi\OneDrive\Documents\HMS\HMS API\HMS\src\Core\HMS.Domain\obj\Debug\net6.0\HMS.Domain.csproj.AssemblyReference.cache
+C:\Users\Rhabi\OneDrive\Documents\HMS\HMS API\HMS\src\Core\HMS.Domain\obj\Debug\net6.0\HMS.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Rhabi\OneDrive\Documents\HMS\HMS API\HMS\src\Core\HMS.Domain\obj\Debug\net6.0\HMS.Domain.AssemblyInfoInputs.cache
+C:\Users\Rhabi\OneDrive\Documents\HMS\HMS API\HMS\src\Core\HMS.Domain\obj\Debug\net6.0\HMS.Domain.AssemblyInfo.cs
+C:\Users\Rhabi\OneDrive\Documents\HMS\HMS API\HMS\src\Core\HMS.Domain\obj\Debug\net6.0\HMS.Domain.csproj.CoreCompileInputs.cache
+C:\Users\Rhabi\OneDrive\Documents\HMS\HMS API\HMS\src\Core\HMS.Domain\obj\Debug\net6.0\HMS.Domain.dll
+C:\Users\Rhabi\OneDrive\Documents\HMS\HMS API\HMS\src\Core\HMS.Domain\obj\Debug\net6.0\refint\HMS.Domain.dll
+C:\Users\Rhabi\OneDrive\Documents\HMS\HMS API\HMS\src\Core\HMS.Domain\obj\Debug\net6.0\HMS.Domain.pdb
+C:\Users\Rhabi\OneDrive\Documents\HMS\HMS API\HMS\src\Core\HMS.Domain\obj\Debug\net6.0\ref\HMS.Domain.dll
