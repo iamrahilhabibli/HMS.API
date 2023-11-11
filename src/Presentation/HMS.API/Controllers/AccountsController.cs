@@ -1,7 +1,9 @@
 ﻿using HMS.Application.Abstraction.Services;
 using HMS.Application.DTOs.Auth_DTOs;
 using HMS.Application.DTOs.Response_DTOs;
-using Microsoft.AspNetCore.Http;
+using HMS.Domain.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -12,10 +14,13 @@ namespace HMS.API.Controllers
     public class AccountsController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly SignInManager<AppUser> _signInManager;
 
-        public AccountsController(IAuthService authService)
+        public AccountsController(IAuthService authService,
+                                  SignInManager<AppUser> signInManager)
         {
             _authService = authService;
+            _signInManager = signInManager;
         }
         [HttpPost("[action]")]
         public async Task<IActionResult> RegisterAccount(UserRegisterDto userRegisterDto)
@@ -30,6 +35,20 @@ namespace HMS.API.Controllers
         {
             TokenResponseDto response = await _authService.Login(userSignInDto);
             return Ok(response);
+        }
+        [HttpPost("[action]")]
+        [Authorize]
+        public async Task<IActionResult> ValidateRefreshToken(string refreshToken)
+        {
+            TokenResponseDto response = await _authService.ValidateRefreshToken(refreshToken);
+            return Ok(response);
+        }
+        [HttpPost("[action]")]
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return Ok();
         }
     }
 }

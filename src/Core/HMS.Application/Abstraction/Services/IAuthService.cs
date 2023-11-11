@@ -7,5 +7,6 @@ namespace HMS.Application.Abstraction.Services
     {
         Task Register(UserRegisterDto userRegisterDto);
         Task<TokenResponseDto> Login(UserSignInDto userSignInDto);
+        Task<TokenResponseDto> ValidateRefreshToken(string refreshToken);
     }
 }

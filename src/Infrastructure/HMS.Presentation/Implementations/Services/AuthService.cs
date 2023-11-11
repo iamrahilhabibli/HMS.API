@@ -6,8 +6,10 @@ using HMS.Application.DTOs.Auth_DTOs;
 using HMS.Application.DTOs.Response_DTOs;
 using HMS.Domain.Entities;
 using HMS.Domain.Identity;
+using HMS.Persistence.Context;
 using HMS.Persistence.Exceptions;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Text;
 
@@ -21,13 +23,15 @@ namespace HMS.Persistence.Implementations.Services
         private readonly IVisitorWriteRepository _visitorWriteRepository;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IJwtService _jwtService;
+        private readonly AppDbContext _appDbContext;
 
         public AuthService(IMapper mapper,
                            UserManager<AppUser> userManager,
                            IHotelManagerWriteRepository hotelManagerWriteRepository,
                            IVisitorWriteRepository visitorWriteRepository,
                            SignInManager<AppUser> signInManager,
-                           IJwtService jwtService)
+                           IJwtService jwtService,
+                           AppDbContext appDbContext)
         {
             _mapper = mapper;
             _userManager = userManager;
@@ -35,6 +39,7 @@ namespace HMS.Persistence.Implementations.Services
             _visitorWriteRepository = visitorWriteRepository;
             _signInManager = signInManager;
             _jwtService = jwtService;
+            _appDbContext = appDbContext;
         }
         private void HandleIdentityErrors(IdentityResult identityResult)
         {
@@ -106,6 +111,25 @@ namespace HMS.Persistence.Implementations.Services
             SignInResult signInResult = await _signInManager.CheckPasswordSignInAsync(user, userSignInDto.password, true);
             if (!signInResult.Succeeded) { throw new Exception(); }
             return await TokenGenerator(user);
+        }
+
+        public async Task<TokenResponseDto> ValidateRefreshToken(string refreshToken)
+        {
+            if (refreshToken is null) { throw new ArgumentNullException(); }
+            AppUser user = await _appDbContext.Users.SingleOrDefaultAsync(u => u.RefreshToken == refreshToken);
+            
+            if (user != null)
+            {
+                if (user.RefreshTokenExpiration < DateTime.UtcNow.AddMinutes(5))
+                {
+                    TokenResponseDto token = await _jwtService.CreateJwt(user);
+                    user.RefreshToken = token.refreshToken;
+                    user.RefreshTokenExpiration = token.refreshTokenExpiration;
+                    await _userManager.UpdateAsync(user);
+                    return token;
+                }
+            }
+            return null;
         }
     }
 }
