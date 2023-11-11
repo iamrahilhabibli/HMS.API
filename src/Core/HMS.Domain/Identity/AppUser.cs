@@ -7,5 +7,7 @@ namespace HMS.Domain.Identity
     {
         public Visitor? Visitor { get; set; }
         public HotelManager? Manager { get; set; }
+        public string? RefreshToken { get; set; }
+        public DateTime? RefreshTokenExpiration { get; set; }
     }
 }

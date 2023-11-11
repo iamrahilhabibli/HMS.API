@@ -33,6 +33,7 @@ namespace HMS.Persistence.Extension_Methods
             services.AddAutoMapper(typeof(AccountsProfile).Assembly);
             services.AddScoped<AppDbContextInitialiser>();
         }
+
         public static void AddIdentityServices(this IServiceCollection services)
         {
             services.AddIdentity<AppUser, IdentityRole>(identityOptions =>
