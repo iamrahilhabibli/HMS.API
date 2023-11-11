@@ -1,4 +1,5 @@
-﻿using HMS.Domain.Entities.Common;
+﻿using HMS.Domain.Entities;
+using HMS.Domain.Entities.Common;
 using HMS.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -9,6 +10,8 @@ namespace HMS.Persistence.Context
     public class AppDbContext : IdentityDbContext<AppUser>
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base (options) { }
+        public DbSet<HotelManager> HotelManagers { get; set; }
+        public DbSet<Visitor> Visitors { get; set; }
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             var datas = ChangeTracker.Entries<BaseEntity>();

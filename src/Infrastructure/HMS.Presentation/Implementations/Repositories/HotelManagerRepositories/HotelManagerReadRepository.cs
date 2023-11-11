@@ -1,6 +1,13 @@
-﻿namespace HMS.Persistence.Implementations.Repositories.HotelManagerRepositories
+﻿using HMS.Application.Abstraction.Repositories.IHotelManagerRepositories;
+using HMS.Domain.Entities;
+using HMS.Persistence.Context;
+
+namespace HMS.Persistence.Implementations.Repositories.HotelManagerRepositories
 {
-    public class HotelManagerReadRepository
+    public class HotelManagerReadRepository : ReadRepository<HotelManager>, IHotelManagerReadRepository
     {
+        public HotelManagerReadRepository(AppDbContext context) : base(context)
+        {
+        }
     }
 }
