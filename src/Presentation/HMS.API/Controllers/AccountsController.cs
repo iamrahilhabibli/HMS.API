@@ -15,9 +15,7 @@ namespace HMS.API.Controllers
     {
         private readonly IAuthService _authService;
         private readonly SignInManager<AppUser> _signInManager;
-
-        public AccountsController(IAuthService authService,
-                                  SignInManager<AppUser> signInManager)
+        public AccountsController(IAuthService authService, SignInManager<AppUser> signInManager)
         {
             _authService = authService;
             _signInManager = signInManager;
@@ -36,15 +34,15 @@ namespace HMS.API.Controllers
             TokenResponseDto response = await _authService.Login(userSignInDto);
             return Ok(response);
         }
-        [HttpPost("[action]")]
         [Authorize]
+        [HttpPost("[action]")]
         public async Task<IActionResult> ValidateRefreshToken(string refreshToken)
         {
             TokenResponseDto response = await _authService.ValidateRefreshToken(refreshToken);
             return Ok(response);
         }
-        [HttpPost("[action]")]
         [Authorize]
+        [HttpPost("[action]")]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
