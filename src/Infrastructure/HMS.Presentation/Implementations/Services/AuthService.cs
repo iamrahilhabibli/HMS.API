@@ -5,6 +5,7 @@ using HMS.Application.Abstraction.Services;
 using HMS.Application.DTOs.Auth_DTOs;
 using HMS.Application.DTOs.Response_DTOs;
 using HMS.Domain.Entities;
+using HMS.Domain.Enums;
 using HMS.Domain.Identity;
 using HMS.Persistence.Context;
 using HMS.Persistence.Exceptions;
@@ -112,7 +113,6 @@ namespace HMS.Persistence.Implementations.Services
             if (!signInResult.Succeeded) { throw new Exception(); }
             return await TokenGenerator(user);
         }
-
         public async Task<TokenResponseDto> ValidateRefreshToken(string refreshToken)
         {
             if (refreshToken is null) { throw new ArgumentNullException(); }
@@ -122,11 +122,7 @@ namespace HMS.Persistence.Implementations.Services
             {
                 if (user.RefreshTokenExpiration < DateTime.UtcNow.AddMinutes(5))
                 {
-                    TokenResponseDto token = await _jwtService.CreateJwt(user);
-                    user.RefreshToken = token.refreshToken;
-                    user.RefreshTokenExpiration = token.refreshTokenExpiration;
-                    await _userManager.UpdateAsync(user);
-                    return token;
+                    return await TokenGenerator(user);
                 }
             }
             return null;

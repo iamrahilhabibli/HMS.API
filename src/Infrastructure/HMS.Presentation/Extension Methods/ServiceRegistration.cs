@@ -2,6 +2,7 @@
 using FluentValidation.AspNetCore;
 using HMS.Application.Abstraction.Repositories;
 using HMS.Application.Abstraction.Repositories.IHotelManagerRepositories;
+using HMS.Application.Abstraction.Repositories.IHotelRepositories;
 using HMS.Application.Abstraction.Repositories.IVisitorRepositories;
 using HMS.Application.Abstraction.Services;
 using HMS.Application.Validators.AuthValidators;
@@ -9,6 +10,7 @@ using HMS.Domain.Identity;
 using HMS.Persistence.Context;
 using HMS.Persistence.Implementations.Repositories;
 using HMS.Persistence.Implementations.Repositories.HotelManagerRepositories;
+using HMS.Persistence.Implementations.Repositories.HotelRepositories;
 using HMS.Persistence.Implementations.Repositories.VisitorRepositories;
 using HMS.Persistence.Implementations.Services;
 using HMS.Persistence.MapperProfiles;
@@ -27,6 +29,7 @@ namespace HMS.Persistence.Extension_Methods
             AddReadRepositories(services);
             AddWriteRepositories(services);
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IHotelService, HotelService>();  
             services.AddFluentValidationAutoValidation();
             services.AddFluentValidationClientsideAdapters();
             services.AddValidatorsFromAssemblyContaining<UserRegisterDtoValidator>();
@@ -49,12 +52,14 @@ namespace HMS.Persistence.Extension_Methods
             services.AddScoped(typeof(IReadRepository<>), typeof(ReadRepository<>));
             services.AddScoped<IHotelManagerReadRepository, HotelManagerReadRepository>();
             services.AddScoped<IVisitorReadRepository, VisitorReadRepository>();
+            services.AddScoped<IHotelReadRepository, HotelReadRepository>();
         }
         private static void AddWriteRepositories(this IServiceCollection services)
         {
             services.AddScoped(typeof(IWriteRepository<>), typeof(WriteRepository<>));
             services.AddScoped<IHotelManagerWriteRepository, HotelManagerWriteRepository>();
             services.AddScoped<IVisitorWriteRepository, VisitorWriteRepository>();
+            services.AddScoped<IHotelWriteRepository, HotelWriteRepository>();
         }
     }
 }

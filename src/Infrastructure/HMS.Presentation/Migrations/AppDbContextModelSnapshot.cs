@@ -22,6 +22,76 @@ namespace HMS.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("HMS.Domain.Entities.Amenity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("HotelId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HotelId");
+
+                    b.ToTable("Amenities");
+                });
+
+            modelBuilder.Entity("HMS.Domain.Entities.Hotel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("FloorNumber")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Rating")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("RoomNumber")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Hotels");
+                });
+
             modelBuilder.Entity("HMS.Domain.Entities.HotelManager", b =>
                 {
                     b.Property<Guid>("Id")
@@ -55,6 +125,46 @@ namespace HMS.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("HotelManagers");
+                });
+
+            modelBuilder.Entity("HMS.Domain.Entities.HotelPolicy", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<TimeSpan>("CheckInTime")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan>("CheckOutTime")
+                        .HasColumnType("time");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("HotelId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEarlyCheckInAllowed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsLateCheckOutAllowed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSmokingAllowed")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HotelId");
+
+                    b.ToTable("HotelPolicies");
                 });
 
             modelBuilder.Entity("HMS.Domain.Entities.Visitor", b =>
@@ -296,6 +406,13 @@ namespace HMS.Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("HMS.Domain.Entities.Amenity", b =>
+                {
+                    b.HasOne("HMS.Domain.Entities.Hotel", null)
+                        .WithMany("Amenities")
+                        .HasForeignKey("HotelId");
+                });
+
             modelBuilder.Entity("HMS.Domain.Entities.HotelManager", b =>
                 {
                     b.HasOne("HMS.Domain.Identity.AppUser", "AppUser")
@@ -305,6 +422,17 @@ namespace HMS.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("AppUser");
+                });
+
+            modelBuilder.Entity("HMS.Domain.Entities.HotelPolicy", b =>
+                {
+                    b.HasOne("HMS.Domain.Entities.Hotel", "Hotel")
+                        .WithMany()
+                        .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Hotel");
                 });
 
             modelBuilder.Entity("HMS.Domain.Entities.Visitor", b =>
@@ -367,6 +495,11 @@ namespace HMS.Persistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("HMS.Domain.Entities.Hotel", b =>
+                {
+                    b.Navigation("Amenities");
                 });
 
             modelBuilder.Entity("HMS.Domain.Identity.AppUser", b =>
