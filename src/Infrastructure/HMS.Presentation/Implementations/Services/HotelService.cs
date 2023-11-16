@@ -3,6 +3,7 @@ using HMS.Application.Abstraction.Repositories.IHotelRepositories;
 using HMS.Application.Abstraction.Services;
 using HMS.Application.DTOs.Hotel_DTOs;
 using HMS.Domain.Entities;
+using HMS.Persistence.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace HMS.Persistence.Implementations.Services
@@ -22,12 +23,23 @@ namespace HMS.Persistence.Implementations.Services
             _hotelReadRepository = hotelReadRepository;
         }
 
+        private bool HotelExists(HotelCreateDto hotelCreateDto)
+        {
+            var hotel = _hotelReadRepository.GetByExpressionAsync(hotel => hotel.Name == hotelCreateDto.Name);
+            if (hotel is Hotel) { return true; }
+            return false;
+        }
         public async Task CreateHotel(HotelCreateDto hotelCreateDto)
         {
             if (hotelCreateDto is null) { throw new ArgumentNullException(); }
-            Hotel newHotel = _mapper.Map<Hotel>(hotelCreateDto);
-            await _hotelWriteRepository.AddAsync(newHotel);
-            await _hotelWriteRepository.SaveChangeAsync();
+            var hotelExists = HotelExists(hotelCreateDto);
+            if (hotelExists)
+            {
+                Hotel newHotel = _mapper.Map<Hotel>(hotelCreateDto);
+                await _hotelWriteRepository.AddAsync(newHotel);
+                await _hotelWriteRepository.SaveChangeAsync();
+            }
+            throw new DuplicateHotelNameException("Given hotel name already exists");
         }
 
         public async Task<HotelGetDto> GetHotelById(Guid id)
@@ -36,12 +48,12 @@ namespace HMS.Persistence.Implementations.Services
             var hotel = await _hotelReadRepository.GetByIdAsync(id);
             if (hotel is not Hotel) { throw new Exception(); }
             HotelGetDto hotelGetDto = _mapper.Map<HotelGetDto>(hotel);
-            return hotelGetDto; 
+            return hotelGetDto;
         }
 
         public List<HotelGetDto> GetAllHotels()
         {
-            var hotelsList =  _hotelReadRepository.GetAll();
+            var hotelsList = _hotelReadRepository.GetAll();
             List<HotelGetDto> hotelGetDtos = _mapper.Map<List<HotelGetDto>>(hotelsList);
             return hotelGetDtos;
 
@@ -58,14 +70,14 @@ namespace HMS.Persistence.Implementations.Services
             //    hotelGetDtos.Add(hotelGetDto);  
             //}
             //return hotelGetDtos; 
-       }
+        }
 
-        public async Task<List<HotelGetDto>> GetHotelsPaginated(int page = 1, int pageSize = 3)
+        public async Task<List<HotelGetDto>> GetHotelsPaginated(int page, int pageSize)
         {
             var hotels = await _hotelReadRepository.GetAllByExpressionOrderBy
-                (hotel => hotel.IsDeleted == false, 
-                pageSize, 
-                (page - 1) * pageSize, 
+                (hotel => hotel.IsDeleted == false,
+                pageSize,
+                (page - 1) * pageSize,
                 hotel => hotel.DateCreated)
                 .ToListAsync();
             var hotelDtos = _mapper.Map<List<HotelGetDto>>(hotels);
