@@ -5,13 +5,11 @@ using HMS.Application.Abstraction.Services;
 using HMS.Application.DTOs.Auth_DTOs;
 using HMS.Application.DTOs.Response_DTOs;
 using HMS.Domain.Entities;
-using HMS.Domain.Enums;
 using HMS.Domain.Identity;
 using HMS.Persistence.Context;
 using HMS.Persistence.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using System.Text;
 
 namespace HMS.Persistence.Implementations.Services

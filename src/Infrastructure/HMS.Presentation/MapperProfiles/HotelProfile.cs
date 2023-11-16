@@ -9,6 +9,7 @@ namespace HMS.Persistence.MapperProfiles
         public HotelProfile()
         {
             CreateMap<Hotel, HotelCreateDto>().ReverseMap();
+            CreateMap<Hotel, HotelGetDto>().ReverseMap();
         }
     }
 }
