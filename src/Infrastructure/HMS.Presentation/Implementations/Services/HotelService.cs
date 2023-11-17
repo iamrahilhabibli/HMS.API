@@ -2,6 +2,7 @@
 using HMS.Application.Abstraction.Repositories.IHotelRepositories;
 using HMS.Application.Abstraction.Services;
 using HMS.Application.DTOs.Hotel_DTOs;
+using HMS.Application.Wrappers;
 using HMS.Domain.Entities;
 using HMS.Persistence.Exceptions;
 using Microsoft.EntityFrameworkCore;
@@ -26,8 +27,8 @@ namespace HMS.Persistence.Implementations.Services
         private bool HotelExists(HotelCreateDto hotelCreateDto)
         {
             var hotel = _hotelReadRepository.GetByExpressionAsync(hotel => hotel.Name == hotelCreateDto.Name);
-            if (hotel is Hotel) { return true; }
-            return false;
+            if (hotel is null) { return false; }
+            return true;
         }
         public async Task CreateHotel(HotelCreateDto hotelCreateDto)
         {
@@ -38,6 +39,7 @@ namespace HMS.Persistence.Implementations.Services
                 Hotel newHotel = _mapper.Map<Hotel>(hotelCreateDto);
                 await _hotelWriteRepository.AddAsync(newHotel);
                 await _hotelWriteRepository.SaveChangeAsync();
+                return;
             }
             throw new DuplicateHotelNameException("Given hotel name already exists");
         }
@@ -72,16 +74,23 @@ namespace HMS.Persistence.Implementations.Services
             //return hotelGetDtos; 
         }
 
-        public async Task<List<HotelGetDto>> GetHotelsPaginated(int page, int pageSize)
+        public async Task<PaginatedResult<HotelGetDto>> GetHotelsPaginated(int page, int pageSize)
         {
-            var hotels = await _hotelReadRepository.GetAllByExpressionOrderBy
+            var query = _hotelReadRepository.GetAllByExpressionOrderBy
                 (hotel => hotel.IsDeleted == false,
                 pageSize,
                 (page - 1) * pageSize,
-                hotel => hotel.DateCreated)
-                .ToListAsync();
-            var hotelDtos = _mapper.Map<List<HotelGetDto>>(hotels);
-            return hotelDtos;
+                hotel => hotel.DateCreated);
+            var hotels = await query.ToListAsync();
+            var totalCount = await _hotelReadRepository.GetAll().CountAsync();
+            var paginatedResult = new PaginatedResult<HotelGetDto>
+            {
+                Items = _mapper.Map<List<HotelGetDto>>(hotels),
+                TotalCount = totalCount,
+                Page = page,
+                PageSize = pageSize
+            };
+            return paginatedResult;
         }
     }
 }

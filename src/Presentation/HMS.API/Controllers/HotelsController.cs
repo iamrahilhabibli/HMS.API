@@ -38,7 +38,7 @@ namespace HMS.API.Controllers
             return Ok(hotelGetDto);
         }
         [HttpGet("HotelsList")]
-        public async Task<IActionResult> ListedHotels([FromQuery] int pageSize, [FromQuery] int page = 1)
+        public async Task<IActionResult> ListedHotels([FromQuery] int pageSize = 3, [FromQuery] int page = 1)
         {
             var response = await _hotelService.GetHotelsPaginated(page, pageSize);
             return Ok(response);

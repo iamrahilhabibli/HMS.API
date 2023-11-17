@@ -1,4 +1,5 @@
 ﻿using HMS.Application.DTOs.Hotel_DTOs;
+using HMS.Application.Wrappers;
 
 namespace HMS.Application.Abstraction.Services
 {
@@ -7,6 +8,6 @@ namespace HMS.Application.Abstraction.Services
         Task CreateHotel(HotelCreateDto hotelCreateDto);
         List<HotelGetDto> GetAllHotels();
         Task<HotelGetDto> GetHotelById(Guid id);
-        Task<List<HotelGetDto>> GetHotelsPaginated(int page = 1, int pageSize = 3);
+        Task<PaginatedResult<HotelGetDto>> GetHotelsPaginated(int page = 1, int pageSize = 3);
     }
 }
