@@ -8,6 +8,7 @@ using HMS.Application.Abstraction.Services;
 using HMS.Application.Validators.AuthValidators;
 using HMS.Domain.Identity;
 using HMS.Persistence.Context;
+using HMS.Persistence.Implementations.CachedServices;
 using HMS.Persistence.Implementations.Repositories;
 using HMS.Persistence.Implementations.Repositories.HotelManagerRepositories;
 using HMS.Persistence.Implementations.Repositories.HotelRepositories;
@@ -30,11 +31,13 @@ namespace HMS.Persistence.Extension_Methods
             AddWriteRepositories(services);
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IHotelService, HotelService>();  
+            services.Decorate<IHotelService, CachedHotelService>();
             services.AddFluentValidationAutoValidation();
             services.AddFluentValidationClientsideAdapters();
             services.AddValidatorsFromAssemblyContaining<UserRegisterDtoValidator>();
             services.AddAutoMapper(typeof(AccountsProfile).Assembly);
             services.AddScoped<AppDbContextInitialiser>();
+
         }
 
         public static void AddIdentityServices(this IServiceCollection services)

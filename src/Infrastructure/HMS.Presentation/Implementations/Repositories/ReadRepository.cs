@@ -2,6 +2,7 @@
 using HMS.Domain.Entities.Common;
 using HMS.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using System.Linq.Expressions;
 
 namespace HMS.Persistence.Implementations.Repositories

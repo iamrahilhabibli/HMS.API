@@ -85,3 +85,5 @@ C:\Users\Rhabi\OneDrive\Documents\HMS\HMS API\HMS\src\Presentation\HMS.API\bin\D
 C:\Users\Rhabi\OneDrive\Documents\HMS\HMS API\HMS\src\Presentation\HMS.API\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\Rhabi\OneDrive\Documents\HMS\HMS API\HMS\src\Presentation\HMS.API\bin\Debug\net6.0\HMS.Infrastructure.dll
 C:\Users\Rhabi\OneDrive\Documents\HMS\HMS API\HMS\src\Presentation\HMS.API\bin\Debug\net6.0\HMS.Infrastructure.pdb
+C:\Users\Rhabi\OneDrive\Documents\HMS\HMS API\HMS\src\Presentation\HMS.API\bin\Debug\net6.0\Microsoft.Extensions.DependencyModel.dll
+C:\Users\Rhabi\OneDrive\Documents\HMS\HMS API\HMS\src\Presentation\HMS.API\bin\Debug\net6.0\Scrutor.dll
