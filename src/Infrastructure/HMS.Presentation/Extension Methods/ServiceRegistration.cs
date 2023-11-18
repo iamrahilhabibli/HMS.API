@@ -17,6 +17,7 @@ using HMS.Persistence.Implementations.Services;
 using HMS.Persistence.MapperProfiles;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -30,8 +31,11 @@ namespace HMS.Persistence.Extension_Methods
             AddReadRepositories(services);
             AddWriteRepositories(services);
             services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<IHotelService, HotelService>();  
-            services.Decorate<IHotelService, CachedHotelService>();
+
+            services.AddScoped<IHotelService, HotelService>();
+            services.AddScoped<ICachedHotelService, CachedHotelServiceDecorator>();
+            services.Decorate<IHotelService, CachedHotelServiceDecorator>();
+
             services.AddFluentValidationAutoValidation();
             services.AddFluentValidationClientsideAdapters();
             services.AddValidatorsFromAssemblyContaining<UserRegisterDtoValidator>();

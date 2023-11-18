@@ -14,18 +14,15 @@ namespace HMS.Persistence.Implementations.Services
     {
         private readonly IHotelWriteRepository _hotelWriteRepository;
         private readonly IHotelReadRepository _hotelReadRepository;
-        private readonly IMemoryCache _memoryCache;
         private readonly IMapper _mapper;
 
         public HotelService(IHotelWriteRepository hotelWriteRepository,
                             IMapper mapper,
-                            IHotelReadRepository hotelReadRepository,
-                            IMemoryCache memoryCache)
+                            IHotelReadRepository hotelReadRepository)
         {
             _hotelWriteRepository = hotelWriteRepository;
             _mapper = mapper;
             _hotelReadRepository = hotelReadRepository;
-            _memoryCache = memoryCache;
         }
 
         private async Task<bool> HotelExists(HotelCreateDto hotelCreateDto)
