@@ -6,6 +6,7 @@ using HMS.Application.Wrappers;
 using HMS.Domain.Entities;
 using HMS.Persistence.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace HMS.Persistence.Implementations.Services
 {
@@ -13,28 +14,30 @@ namespace HMS.Persistence.Implementations.Services
     {
         private readonly IHotelWriteRepository _hotelWriteRepository;
         private readonly IHotelReadRepository _hotelReadRepository;
+        private readonly IMemoryCache _memoryCache;
         private readonly IMapper _mapper;
 
         public HotelService(IHotelWriteRepository hotelWriteRepository,
                             IMapper mapper,
-                            IHotelReadRepository hotelReadRepository)
+                            IHotelReadRepository hotelReadRepository,
+                            IMemoryCache memoryCache)
         {
             _hotelWriteRepository = hotelWriteRepository;
             _mapper = mapper;
             _hotelReadRepository = hotelReadRepository;
+            _memoryCache = memoryCache;
         }
 
-        private bool HotelExists(HotelCreateDto hotelCreateDto)
+        private async Task<bool> HotelExists(HotelCreateDto hotelCreateDto)
         {
-            var hotel = _hotelReadRepository.GetByExpressionAsync(hotel => hotel.Name == hotelCreateDto.Name);
-            if (hotel is null) { return false; }
-            return true;
+            var hotel = await _hotelReadRepository.GetByExpressionAsync(hotel => hotel.Name == hotelCreateDto.Name);
+            return hotel != null;
         }
         public async Task CreateHotel(HotelCreateDto hotelCreateDto)
         {
             if (hotelCreateDto is null) { throw new ArgumentNullException(); }
-            var hotelExists = HotelExists(hotelCreateDto);
-            if (hotelExists)
+            var hotelExists = await HotelExists(hotelCreateDto);
+            if (!hotelExists)
             {
                 Hotel newHotel = _mapper.Map<Hotel>(hotelCreateDto);
                 await _hotelWriteRepository.AddAsync(newHotel);

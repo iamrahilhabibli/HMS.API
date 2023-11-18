@@ -11,13 +11,10 @@ namespace HMS.API.Controllers
     public class HotelsController : ControllerBase
     {
         private readonly IHotelService _hotelService;
-        private readonly IMemoryCache _cache;
 
-        public HotelsController(IHotelService hotelService,
-                                IMemoryCache cache)
+        public HotelsController(IHotelService hotelService)
         {
             _hotelService = hotelService;
-            _cache = cache;
         }
         [HttpPost("[action]")]
         public async Task<IActionResult> CreateHotel([FromBody] HotelCreateDto hotelCreateDto)
