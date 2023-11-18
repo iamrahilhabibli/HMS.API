@@ -6,7 +6,6 @@ using HMS.Application.Wrappers;
 using HMS.Domain.Entities;
 using HMS.Persistence.Exceptions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace HMS.Persistence.Implementations.Services
 {

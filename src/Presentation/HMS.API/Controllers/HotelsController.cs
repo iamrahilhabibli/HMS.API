@@ -1,7 +1,6 @@
 ﻿using HMS.Application.Abstraction.Services;
 using HMS.Application.DTOs.Hotel_DTOs;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 using System.Net;
 
 namespace HMS.API.Controllers

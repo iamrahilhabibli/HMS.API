@@ -29,7 +29,17 @@ namespace HMS.Persistence.Implementations.CachedServices
 
         public List<HotelGetDto> GetAllHotels()
         {
-            return _hotelService.GetAllHotels();
+            var options = new MemoryCacheEntryOptions()
+                .SetSlidingExpiration(TimeSpan.FromSeconds(10))
+                .SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
+
+            if(!_memoryCache.TryGetValue(HotelListCachedKey, out List<HotelGetDto> result))
+            {
+                result = _hotelService.GetAllHotels();
+                _memoryCache.Set(HotelListCachedKey, result,options);
+                _logger.LogInformation("Hotels Caching Done");
+            }
+            return result;  
         }
 
         public async Task<HotelGetDto> GetHotelById(Guid id)
@@ -38,18 +48,7 @@ namespace HMS.Persistence.Implementations.CachedServices
         }
         public async Task<PaginatedResult<HotelGetDto>> GetHotelsPaginated(int page = 1, int pageSize = 3)
         {
-            var options = new MemoryCacheEntryOptions()
-                .SetSlidingExpiration(TimeSpan.FromSeconds(10))
-                .SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
-
-            if (!_memoryCache.TryGetValue(HotelListCachedKey, out PaginatedResult<HotelGetDto> result))
-            {
-                result = await _hotelService.GetHotelsPaginated(page, pageSize);
-                _memoryCache.Set(HotelListCachedKey, result, options);
-                _logger.LogInformation("<--- Result has been cached!");
-            }
-            return result;
+            return await _hotelService.GetHotelsPaginated(page, pageSize);  
         }
-
     }
 }
