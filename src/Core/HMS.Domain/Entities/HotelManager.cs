@@ -9,6 +9,7 @@ namespace HMS.Domain.Entities
         public string LastName { get; set; } = null!;
         public AppUser AppUser { get; set; } = null!;
         public string AppUserId { get; set; } = null!;
-
+        public Hotel? Hotel { get; set; }
+        public Guid? HotelId { get; set; }
     }
 }

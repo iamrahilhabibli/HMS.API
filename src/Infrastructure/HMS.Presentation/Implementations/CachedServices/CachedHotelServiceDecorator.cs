@@ -22,9 +22,9 @@ namespace HMS.Persistence.Implementations.CachedServices
             _logger = logger;
         }
 
-        public async Task CreateHotel(HotelCreateDto hotelCreateDto)
+        public async Task CreateHotel(string appUserId, HotelCreateDto hotelCreateDto)
         {
-            await _hotelService.CreateHotel(hotelCreateDto);
+            await _hotelService.CreateHotel(appUserId, hotelCreateDto);
         }
 
         public async Task DeleteHotel(Guid id)

@@ -5,7 +5,7 @@ namespace HMS.Application.Abstraction.Services
 {
     public interface IHotelService
     {
-        Task CreateHotel(HotelCreateDto hotelCreateDto);
+        Task CreateHotel(string appUserId, HotelCreateDto hotelCreateDto);
         List<HotelGetDto> GetAllHotels();
         Task<HotelGetDto> GetHotelById(Guid id);
         Task<PaginatedResult<HotelGetDto>> GetHotelsPaginated(int page = 1, int pageSize = 3);

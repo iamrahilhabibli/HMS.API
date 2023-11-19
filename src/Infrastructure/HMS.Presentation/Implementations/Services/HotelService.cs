@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HMS.Application.Abstraction.Repositories.IHotelManagerRepositories;
 using HMS.Application.Abstraction.Repositories.IHotelRepositories;
 using HMS.Application.Abstraction.Repositories.IPolicyRepositories;
 using HMS.Application.Abstraction.Services;
@@ -15,16 +16,20 @@ namespace HMS.Persistence.Implementations.Services
         private readonly IHotelWriteRepository _hotelWriteRepository;
         private readonly IHotelReadRepository _hotelReadRepository;
         private readonly IPolicyWriteRepository _policyWriteRepository;
+        private readonly IHotelManagerReadRepository _hotelManagerReadRepository;
+        private readonly IHotelManagerWriteRepository _hotelManagerWriteRepository;
         private readonly IMapper _mapper;
 
         public HotelService(IHotelWriteRepository hotelWriteRepository,
                             IMapper mapper,
-                            IHotelReadRepository hotelReadRepository, IPolicyWriteRepository policyWriteRepository)
+                            IHotelReadRepository hotelReadRepository, IPolicyWriteRepository policyWriteRepository, IHotelManagerReadRepository hotelManagerReadRepository, IHotelManagerWriteRepository hotelManagerWriteRepository)
         {
             _hotelWriteRepository = hotelWriteRepository;
             _mapper = mapper;
             _hotelReadRepository = hotelReadRepository;
             _policyWriteRepository = policyWriteRepository;
+            _hotelManagerReadRepository = hotelManagerReadRepository;
+            _hotelManagerWriteRepository = hotelManagerWriteRepository;
         }
 
         private async Task<bool> HotelExists(HotelCreateDto hotelCreateDto)
@@ -41,13 +46,25 @@ namespace HMS.Persistence.Implementations.Services
             await _policyWriteRepository.SaveChangeAsync();
             return newHotelPolicies;
         }
-        public async Task CreateHotel(HotelCreateDto hotelCreateDto)
+        private async Task SetHotelManager(string appUserId, Hotel newHotel)
+        {
+            var hotelManager = await _hotelManagerReadRepository.GetHotelManagerByAppUserId(manager => manager.AppUserId == appUserId);
+            if(hotelManager != null) 
+            {
+                hotelManager.Hotel = newHotel; 
+                await _hotelManagerWriteRepository.SaveChangeAsync(); 
+                return; 
+            }
+            throw new InvalidOperationException($"HotelManager with {appUserId} does not exist, something went wrong");
+        }
+        public async Task CreateHotel(string appUserId, HotelCreateDto hotelCreateDto)
         {
             if (hotelCreateDto is null) { throw new ArgumentNullException(); }
             var hotelExists = await HotelExists(hotelCreateDto);
             if (hotelExists) throw new DuplicateHotelNameException("Given hotel name already exists");
             var newHotel = _mapper.Map<Hotel>(hotelCreateDto);
             newHotel.Policies = await CreateHotelPolicies(hotelCreateDto, newHotel);
+            await SetHotelManager(appUserId, newHotel);
         }
 
         public async Task<HotelGetDto> GetHotelById(Guid id)

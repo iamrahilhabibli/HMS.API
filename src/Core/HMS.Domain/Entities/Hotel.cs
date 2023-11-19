@@ -12,5 +12,6 @@ namespace HMS.Domain.Entities
         public int RoomNumber { get; set; }
         public ICollection<Amenity>? Amenities { get; set; }
         public HotelPolicy Policies { get; set; } = null!;
+        public HotelManager Manager { get; set; } = null!;
     }
 }

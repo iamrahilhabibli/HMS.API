@@ -1,5 +1,6 @@
 ﻿using HMS.Application.Abstraction.Services;
 using HMS.Application.DTOs.Hotel_DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -15,10 +16,10 @@ namespace HMS.API.Controllers
         {
             _hotelService = hotelService;
         }
-        [HttpPost("[action]")]
-        public async Task<IActionResult> CreateHotel([FromBody] HotelCreateDto hotelCreateDto)
+        [HttpPost("[action]/{appUserId}")]
+        public async Task<IActionResult> CreateHotel( string appUserId, [FromBody] HotelCreateDto hotelCreateDto)
         {
-            await _hotelService.CreateHotel(hotelCreateDto);
+            await _hotelService.CreateHotel(appUserId, hotelCreateDto);
             return StatusCode((int)HttpStatusCode.Created);
         }
         [HttpGet("[action]")]
@@ -27,13 +28,13 @@ namespace HMS.API.Controllers
             var response = _hotelService.GetAllHotels();
             return Ok(response);
         }
-        [HttpGet("Details")]
+        [HttpGet("details")]
         public async Task<IActionResult> GetDetails([FromQuery] Guid Id)
         {
             HotelGetDto hotelGetDto = await _hotelService.GetHotelById(Id);
             return Ok(hotelGetDto);
         }
-        [HttpGet("HotelsList")]
+        [HttpGet("hotelslist")]
         public async Task<IActionResult> ListedHotels([FromQuery] int pageSize = 3, [FromQuery] int page = 1)
         {
             var response = await _hotelService.GetHotelsPaginated(page, pageSize);

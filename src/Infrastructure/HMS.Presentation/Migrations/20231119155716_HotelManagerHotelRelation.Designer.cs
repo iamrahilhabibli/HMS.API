@@ -4,6 +4,7 @@ using HMS.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HMS.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231119155716_HotelManagerHotelRelation")]
+    partial class HotelManagerHotelRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -112,7 +114,7 @@ namespace HMS.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("HotelId")
+                    b.Property<Guid>("HotelId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
@@ -128,8 +130,7 @@ namespace HMS.Persistence.Migrations
                         .IsUnique();
 
                     b.HasIndex("HotelId")
-                        .IsUnique()
-                        .HasFilter("[HotelId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("HotelManagers");
                 });
@@ -433,7 +434,9 @@ namespace HMS.Persistence.Migrations
 
                     b.HasOne("HMS.Domain.Entities.Hotel", "Hotel")
                         .WithOne("Manager")
-                        .HasForeignKey("HMS.Domain.Entities.HotelManager", "HotelId");
+                        .HasForeignKey("HMS.Domain.Entities.HotelManager", "HotelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("AppUser");
 
