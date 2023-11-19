@@ -28,16 +28,22 @@ namespace HMS.API.Controllers
             return Ok(response);
         }
         [HttpGet("Details")]
-        public async Task<IActionResult> GetDetails([FromQuery]Guid Id)
+        public async Task<IActionResult> GetDetails([FromQuery] Guid Id)
         {
             HotelGetDto hotelGetDto = await _hotelService.GetHotelById(Id);
             return Ok(hotelGetDto);
         }
-            [HttpGet("HotelsList")]
-            public async Task<IActionResult> ListedHotels([FromQuery] int pageSize = 3, [FromQuery] int page = 1)
-            {
-                var response = await _hotelService.GetHotelsPaginated(page, pageSize);
-                return Ok(response);
-            }
+        [HttpGet("HotelsList")]
+        public async Task<IActionResult> ListedHotels([FromQuery] int pageSize = 3, [FromQuery] int page = 1)
+        {
+            var response = await _hotelService.GetHotelsPaginated(page, pageSize);
+            return Ok(response);
+        }
+        [HttpDelete("deletehotel/{Id}")]
+        public async Task<IActionResult> DeleteHotel(Guid Id)
+        {
+            await _hotelService.DeleteHotel(Id);
+            return StatusCode((int)HttpStatusCode.NoContent);
+        }
     }
 }

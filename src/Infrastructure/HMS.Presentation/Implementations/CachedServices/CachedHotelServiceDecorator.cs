@@ -27,6 +27,11 @@ namespace HMS.Persistence.Implementations.CachedServices
             await _hotelService.CreateHotel(hotelCreateDto);
         }
 
+        public async Task DeleteHotel(Guid id)
+        {
+            await _hotelService.DeleteHotel(id);
+        }
+
         public List<HotelGetDto> GetAllHotels()
         {
             var options = new MemoryCacheEntryOptions()

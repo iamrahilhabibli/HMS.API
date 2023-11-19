@@ -61,7 +61,7 @@ namespace HMS.Persistence.Implementations.Services
 
         public List<HotelGetDto> GetAllHotels()
         {
-            var hotelsList = _hotelReadRepository.GetAll();
+            var hotelsList = _hotelReadRepository.GetAllByExpression(hotel => hotel.IsDeleted == false, int.MaxValue, 0);
             var hotelGetDtos = _mapper.Map<List<HotelGetDto>>(hotelsList);
             return hotelGetDtos;
 
@@ -103,6 +103,19 @@ namespace HMS.Persistence.Implementations.Services
         {
             if (id == Guid.Empty) throw new ArgumentNullException();
             var hotel = await _hotelReadRepository.GetByIdAsync(id);
+        }
+
+        public async Task DeleteHotel(Guid id)
+        {
+            if(id == Guid.Empty) { throw new ArgumentNullException(); }
+            var hotel = await _hotelReadRepository.GetByIdAsync(id);
+            if(hotel != null) 
+            {
+                hotel.IsDeleted = true;
+                await _hotelWriteRepository.SaveChangeAsync(); 
+                return; 
+            }
+            throw new NotFoundException($"Hotel with {id} has not been found");
         }
     }
 }
