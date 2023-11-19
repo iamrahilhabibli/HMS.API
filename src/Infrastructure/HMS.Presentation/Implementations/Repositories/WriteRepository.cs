@@ -9,6 +9,8 @@ namespace HMS.Persistence.Implementations.Repositories
     {
         private readonly AppDbContext _context;
         public DbSet<T> Table => _context.Set<T>();
+
+
         public WriteRepository(AppDbContext context)
         {
             _context = context;

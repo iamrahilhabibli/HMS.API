@@ -33,12 +33,10 @@ namespace HMS.Persistence.Implementations.CachedServices
                 .SetSlidingExpiration(TimeSpan.FromSeconds(10))
                 .SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
 
-            if(!_memoryCache.TryGetValue(HotelListCachedKey, out List<HotelGetDto> result))
-            {
-                result = _hotelService.GetAllHotels();
-                _memoryCache.Set(HotelListCachedKey, result,options);
-                _logger.LogInformation("Hotels Caching Done");
-            }
+            if (_memoryCache.TryGetValue(HotelListCachedKey, out List<HotelGetDto> result)) return result;
+            result = _hotelService.GetAllHotels();
+            _memoryCache.Set(HotelListCachedKey, result,options);
+            _logger.LogInformation("Hotels Caching Done");
             return result;  
         }
 
@@ -49,6 +47,11 @@ namespace HMS.Persistence.Implementations.CachedServices
         public async Task<PaginatedResult<HotelGetDto>> GetHotelsPaginated(int page = 1, int pageSize = 3)
         {
             return await _hotelService.GetHotelsPaginated(page, pageSize);  
+        }
+
+        public async Task UpdateHotelById(Guid id, HotelUpdateDto hotelUpdateDto)
+        {
+            await _hotelService.UpdateHotelById(id, hotelUpdateDto);
         }
     }
 }

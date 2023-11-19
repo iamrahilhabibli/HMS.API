@@ -5,8 +5,9 @@ namespace HMS.Domain.Entities
     public class HotelPolicy:BaseEntity
     {
         public Hotel Hotel { get; set; } = null!;
-        public TimeOnly CheckInTime { get; set; }
-        public TimeOnly CheckOutTime { get; set; }
+        public Guid HotelId { get; set; }
+        public string CheckInTime { get; set; } = null!;
+        public string CheckOutTime { get; set; } = null!;
         public bool IsEarlyCheckInAllowed { get; set; }
         public bool IsLateCheckOutAllowed { get; set; }
         public bool IsSmokingAllowed { get; set; }

@@ -1,4 +1,5 @@
-﻿using HMS.Domain.Entities.Common;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using HMS.Domain.Entities.Common;
 
 namespace HMS.Domain.Entities
 {
@@ -9,6 +10,7 @@ namespace HMS.Domain.Entities
         public decimal Rating { get; set; }
         public int FloorNumber { get; set; }
         public int RoomNumber { get; set; }
-        public ICollection<Amenity>? Amenities { get; set; } 
+        public ICollection<Amenity>? Amenities { get; set; }
+        public HotelPolicy Policies { get; set; } = null!;
     }
 }

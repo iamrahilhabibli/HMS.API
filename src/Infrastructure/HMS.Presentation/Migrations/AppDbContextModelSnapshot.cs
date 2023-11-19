@@ -133,11 +133,13 @@ namespace HMS.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<TimeSpan>("CheckInTime")
-                        .HasColumnType("time");
+                    b.Property<string>("CheckInTime")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<TimeSpan>("CheckOutTime")
-                        .HasColumnType("time");
+                    b.Property<string>("CheckOutTime")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
@@ -162,7 +164,8 @@ namespace HMS.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("HotelId");
+                    b.HasIndex("HotelId")
+                        .IsUnique();
 
                     b.ToTable("HotelPolicies");
                 });
@@ -427,8 +430,8 @@ namespace HMS.Persistence.Migrations
             modelBuilder.Entity("HMS.Domain.Entities.HotelPolicy", b =>
                 {
                     b.HasOne("HMS.Domain.Entities.Hotel", "Hotel")
-                        .WithMany()
-                        .HasForeignKey("HotelId")
+                        .WithOne("Policies")
+                        .HasForeignKey("HMS.Domain.Entities.HotelPolicy", "HotelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -500,6 +503,9 @@ namespace HMS.Persistence.Migrations
             modelBuilder.Entity("HMS.Domain.Entities.Hotel", b =>
                 {
                     b.Navigation("Amenities");
+
+                    b.Navigation("Policies")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("HMS.Domain.Identity.AppUser", b =>

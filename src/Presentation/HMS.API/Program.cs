@@ -82,6 +82,7 @@ using(var scope = app.Services.CreateScope())
     var instance = scope.ServiceProvider.GetRequiredService<AppDbContextInitialiser>();
     await instance.InitialiseAsync();
     await instance.RoleSeedAsync();
+    await instance.UserSeedAsync();
 }
 
 // Configure the HTTP request pipeline.
@@ -92,7 +93,7 @@ if (app.Environment.IsDevelopment())
 }
 app.UseCors("AllowAll");
 app.UseHttpsRedirection();
-app.UseAuthorization();
 app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 app.Run();

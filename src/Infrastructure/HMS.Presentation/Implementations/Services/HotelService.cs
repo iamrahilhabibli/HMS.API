@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using HMS.Application.Abstraction.Repositories.IHotelRepositories;
+using HMS.Application.Abstraction.Repositories.IPolicyRepositories;
 using HMS.Application.Abstraction.Services;
 using HMS.Application.DTOs.Hotel_DTOs;
 using HMS.Application.Wrappers;
@@ -13,15 +14,17 @@ namespace HMS.Persistence.Implementations.Services
     {
         private readonly IHotelWriteRepository _hotelWriteRepository;
         private readonly IHotelReadRepository _hotelReadRepository;
+        private readonly IPolicyWriteRepository _policyWriteRepository;
         private readonly IMapper _mapper;
 
         public HotelService(IHotelWriteRepository hotelWriteRepository,
                             IMapper mapper,
-                            IHotelReadRepository hotelReadRepository)
+                            IHotelReadRepository hotelReadRepository, IPolicyWriteRepository policyWriteRepository)
         {
             _hotelWriteRepository = hotelWriteRepository;
             _mapper = mapper;
             _hotelReadRepository = hotelReadRepository;
+            _policyWriteRepository = policyWriteRepository;
         }
 
         private async Task<bool> HotelExists(HotelCreateDto hotelCreateDto)
@@ -29,18 +32,22 @@ namespace HMS.Persistence.Implementations.Services
             var hotel = await _hotelReadRepository.GetByExpressionAsync(hotel => hotel.Name == hotelCreateDto.Name);
             return hotel != null;
         }
+
+        private async Task<HotelPolicy> CreateHotelPolicies(HotelCreateDto hotelCreateDto, Hotel newHotel)
+        {
+            var newHotelPolicies = _mapper.Map<HotelPolicy>(hotelCreateDto);
+            newHotelPolicies.Hotel = newHotel;
+            await _policyWriteRepository.AddAsync(newHotelPolicies);
+            await _policyWriteRepository.SaveChangeAsync();
+            return newHotelPolicies;
+        }
         public async Task CreateHotel(HotelCreateDto hotelCreateDto)
         {
             if (hotelCreateDto is null) { throw new ArgumentNullException(); }
             var hotelExists = await HotelExists(hotelCreateDto);
-            if (!hotelExists)
-            {
-                Hotel newHotel = _mapper.Map<Hotel>(hotelCreateDto);
-                await _hotelWriteRepository.AddAsync(newHotel);
-                await _hotelWriteRepository.SaveChangeAsync();
-                return;
-            }
-            throw new DuplicateHotelNameException("Given hotel name already exists");
+            if (hotelExists) throw new DuplicateHotelNameException("Given hotel name already exists");
+            var newHotel = _mapper.Map<Hotel>(hotelCreateDto);
+            newHotel.Policies = await CreateHotelPolicies(hotelCreateDto, newHotel);
         }
 
         public async Task<HotelGetDto> GetHotelById(Guid id)
@@ -48,14 +55,14 @@ namespace HMS.Persistence.Implementations.Services
             if (id == Guid.Empty) { throw new ArgumentNullException(); }
             var hotel = await _hotelReadRepository.GetByIdAsync(id);
             if (hotel is not Hotel) { throw new Exception(); }
-            HotelGetDto hotelGetDto = _mapper.Map<HotelGetDto>(hotel);
+            var hotelGetDto = _mapper.Map<HotelGetDto>(hotel);
             return hotelGetDto;
         }
 
         public List<HotelGetDto> GetAllHotels()
         {
             var hotelsList = _hotelReadRepository.GetAll();
-            List<HotelGetDto> hotelGetDtos = _mapper.Map<List<HotelGetDto>>(hotelsList);
+            var hotelGetDtos = _mapper.Map<List<HotelGetDto>>(hotelsList);
             return hotelGetDtos;
 
             // Manual Mapping
@@ -90,6 +97,12 @@ namespace HMS.Persistence.Implementations.Services
                 PageSize = pageSize
             };
             return paginatedResult;
+        }
+
+        public async Task UpdateHotelById(Guid id, HotelUpdateDto hotelUpdateDto)
+        {
+            if (id == Guid.Empty) throw new ArgumentNullException();
+            var hotel = await _hotelReadRepository.GetByIdAsync(id);
         }
     }
 }

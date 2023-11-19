@@ -1,7 +1,6 @@
 ﻿using HMS.Domain.Entities;
 using HMS.Domain.Entities.Common;
 using HMS.Domain.Identity;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

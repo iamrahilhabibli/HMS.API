@@ -1,8 +1,10 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using HMS.Application.Abstraction.Repositories;
+using HMS.Application.Abstraction.Repositories.IAmenityRepositories;
 using HMS.Application.Abstraction.Repositories.IHotelManagerRepositories;
 using HMS.Application.Abstraction.Repositories.IHotelRepositories;
+using HMS.Application.Abstraction.Repositories.IPolicyRepositories;
 using HMS.Application.Abstraction.Repositories.IVisitorRepositories;
 using HMS.Application.Abstraction.Services;
 using HMS.Application.Validators.AuthValidators;
@@ -10,14 +12,15 @@ using HMS.Domain.Identity;
 using HMS.Persistence.Context;
 using HMS.Persistence.Implementations.CachedServices;
 using HMS.Persistence.Implementations.Repositories;
+using HMS.Persistence.Implementations.Repositories.AmenityRepositories;
 using HMS.Persistence.Implementations.Repositories.HotelManagerRepositories;
 using HMS.Persistence.Implementations.Repositories.HotelRepositories;
+using HMS.Persistence.Implementations.Repositories.PolicyRepositories;
 using HMS.Persistence.Implementations.Repositories.VisitorRepositories;
 using HMS.Persistence.Implementations.Services;
 using HMS.Persistence.MapperProfiles;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -60,6 +63,8 @@ namespace HMS.Persistence.Extension_Methods
             services.AddScoped<IHotelManagerReadRepository, HotelManagerReadRepository>();
             services.AddScoped<IVisitorReadRepository, VisitorReadRepository>();
             services.AddScoped<IHotelReadRepository, HotelReadRepository>();
+            services.AddScoped<IAmenityReadRepository, AmenityReadRepository>();
+            services.AddScoped<IPolicyReadRepository, PolicyReadRepository>();
         }
         private static void AddWriteRepositories(this IServiceCollection services)
         {
@@ -67,6 +72,8 @@ namespace HMS.Persistence.Extension_Methods
             services.AddScoped<IHotelManagerWriteRepository, HotelManagerWriteRepository>();
             services.AddScoped<IVisitorWriteRepository, VisitorWriteRepository>();
             services.AddScoped<IHotelWriteRepository, HotelWriteRepository>();
+            services.AddScoped<IAmenityWriteRepository, AmenityWriteRepository>(); 
+            services.AddScoped<IPolicyWriteRepository,PolicyWriteRepository>();
         }
     }
 }
