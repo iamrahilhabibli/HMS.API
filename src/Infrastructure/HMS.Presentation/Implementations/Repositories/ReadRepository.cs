@@ -64,7 +64,19 @@ namespace HMS.Persistence.Implementations.Repositories
             var query = isTracking ? Table : Table.AsNoTracking();
             return await query.FirstOrDefaultAsync(expression);
         }
-
+        public async Task<T?> GetByExpressionAsync(Expression<Func<T,bool>> expression, bool isTracking = true, params string[] includes)
+        {
+            var query = isTracking ? Table : Table.AsNoTracking();
+            if (includes != null)
+            {
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
+            }
+            return await query.SingleOrDefaultAsync(expression);
+        }
         public async Task<T?> GetByIdAsync(Guid id) => await Table.FindAsync(id);
+
     }
 }

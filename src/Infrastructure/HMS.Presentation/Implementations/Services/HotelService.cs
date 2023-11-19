@@ -108,10 +108,11 @@ namespace HMS.Persistence.Implementations.Services
         public async Task DeleteHotel(Guid id)
         {
             if(id == Guid.Empty) { throw new ArgumentNullException(); }
-            var hotel = await _hotelReadRepository.GetByIdAsync(id);
+            var hotel = await _hotelReadRepository.GetByExpressionAsync(hotel => hotel.Id ==  id, true, "Policies");
             if(hotel != null) 
             {
                 hotel.IsDeleted = true;
+                hotel.Policies.IsDeleted = true;
                 await _hotelWriteRepository.SaveChangeAsync(); 
                 return; 
             }
