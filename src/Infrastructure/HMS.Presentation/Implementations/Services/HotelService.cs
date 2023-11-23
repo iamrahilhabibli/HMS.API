@@ -146,7 +146,7 @@ namespace HMS.Persistence.Implementations.Services
             if (string.IsNullOrEmpty(appUserId)) {
                 _logger.LogError("Given parameter is null or empty");
                 throw new ArgumentNullException($"{appUserId} Given User ID is not valid"); }
-            var result = await _hotelManagerReadRepository.GetByExpressionAsync(hotelManager => hotelManager.AppUserId == appUserId && hotelManager.Hotel == null);
+            var result = await _hotelManagerReadRepository.GetByExpressionAsync(hotelManager => hotelManager.AppUserId == appUserId && hotelManager.Hotel != null);
             if (result != null) { return true; }
             return false;
         }
