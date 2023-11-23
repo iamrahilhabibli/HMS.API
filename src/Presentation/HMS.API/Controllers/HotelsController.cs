@@ -1,6 +1,5 @@
 ﻿using HMS.Application.Abstraction.Services;
 using HMS.Application.DTOs.Hotel_DTOs;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -17,7 +16,7 @@ namespace HMS.API.Controllers
             _hotelService = hotelService;
         }
         [HttpPost("[action]/{appUserId}")]
-        public async Task<IActionResult> CreateHotel( string appUserId, [FromBody] HotelCreateDto hotelCreateDto)
+        public async Task<IActionResult> CreateHotel(string appUserId, [FromBody] HotelCreateDto hotelCreateDto)
         {
             await _hotelService.CreateHotel(appUserId, hotelCreateDto);
             return StatusCode((int)HttpStatusCode.Created);
@@ -45,6 +44,13 @@ namespace HMS.API.Controllers
         {
             await _hotelService.DeleteHotel(Id);
             return StatusCode((int)HttpStatusCode.NoContent);
+        }
+
+        [HttpGet("[action]/{appUserId}")]
+        public async Task<IActionResult> CheckHotelExists(string appUserId)
+        {
+            var response = await _hotelService.CheckManagerRegisteredHotel(appUserId);
+            return Ok(response);
         }
     }
 }

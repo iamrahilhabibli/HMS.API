@@ -10,6 +10,6 @@ namespace HMS.Domain.Entities
         public string CheckOutTime { get; set; } = null!;
         public bool IsEarlyCheckInAllowed { get; set; }
         public bool IsLateCheckOutAllowed { get; set; }
-        public bool IsSmokingAllowed { get; set; }
+        public bool IsSmokingAllowed { get; set; } = false;
     }
 }

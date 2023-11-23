@@ -11,5 +11,6 @@ namespace HMS.Application.Abstraction.Services
         Task<PaginatedResult<HotelGetDto>> GetHotelsPaginated(int page = 1, int pageSize = 3);
         Task UpdateHotelById(Guid id, HotelUpdateDto hotelUpdateDto);
         Task DeleteHotel(Guid id);
+        Task<bool> CheckManagerRegisteredHotel(string appUserId);
     }
 }

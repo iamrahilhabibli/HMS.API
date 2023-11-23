@@ -22,6 +22,11 @@ namespace HMS.Persistence.Implementations.CachedServices
             _logger = logger;
         }
 
+        public async Task<bool> CheckManagerRegisteredHotel(string appUserId)
+        {
+          return await _hotelService.CheckManagerRegisteredHotel(appUserId);
+        }
+
         public async Task CreateHotel(string appUserId, HotelCreateDto hotelCreateDto)
         {
             await _hotelService.CreateHotel(appUserId, hotelCreateDto);

@@ -30,6 +30,7 @@ namespace HMS.Persistence.Extension_Methods
     {
         public static void AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddScoped<AppDbContextInitialiser>();
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("Default")));
             AddReadRepositories(services);
             AddWriteRepositories(services);
@@ -43,8 +44,6 @@ namespace HMS.Persistence.Extension_Methods
             services.AddFluentValidationClientsideAdapters();
             services.AddValidatorsFromAssemblyContaining<UserRegisterDtoValidator>();
             services.AddAutoMapper(typeof(AccountsProfile).Assembly);
-            services.AddScoped<AppDbContextInitialiser>();
-
         }
 
         public static void AddIdentityServices(this IServiceCollection services)

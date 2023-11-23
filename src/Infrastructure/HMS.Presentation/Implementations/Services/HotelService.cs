@@ -8,6 +8,7 @@ using HMS.Application.Wrappers;
 using HMS.Domain.Entities;
 using HMS.Persistence.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace HMS.Persistence.Implementations.Services
 {
@@ -19,6 +20,7 @@ namespace HMS.Persistence.Implementations.Services
         private readonly IHotelManagerReadRepository _hotelManagerReadRepository;
         private readonly IHotelManagerWriteRepository _hotelManagerWriteRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger _logger;
 
         public HotelService(IHotelWriteRepository hotelWriteRepository,
                             IMapper mapper,
@@ -57,16 +59,22 @@ namespace HMS.Persistence.Implementations.Services
             }
             throw new InvalidOperationException($"HotelManager with {appUserId} does not exist, something went wrong");
         }
+        private async Task<bool> HotelManagerHotelExists(string appUserId)
+        {
+            var hotelManager = await _hotelManagerReadRepository.GetByExpressionAsync(hotelManager => hotelManager.AppUserId == appUserId && hotelManager.HotelId != null);
+            return hotelManager != null;
+        }
         public async Task CreateHotel(string appUserId, HotelCreateDto hotelCreateDto)
         {
             if (hotelCreateDto is null) { throw new ArgumentNullException(); }
+            var hotelManagerHotelExists = await HotelManagerHotelExists(appUserId);
+            if (hotelManagerHotelExists) throw new ManagerHotelRegistered("Given User already has a registered hotel");
             var hotelExists = await HotelExists(hotelCreateDto);
             if (hotelExists) throw new DuplicateHotelNameException("Given hotel name already exists");
             var newHotel = _mapper.Map<Hotel>(hotelCreateDto);
             newHotel.Policies = await CreateHotelPolicies(hotelCreateDto, newHotel);
             await SetHotelManager(appUserId, newHotel);
         }
-
         public async Task<HotelGetDto> GetHotelById(Guid id)
         {
             if (id == Guid.Empty) { throw new ArgumentNullException(); }
@@ -75,7 +83,6 @@ namespace HMS.Persistence.Implementations.Services
             var hotelGetDto = _mapper.Map<HotelGetDto>(hotel);
             return hotelGetDto;
         }
-
         public List<HotelGetDto> GetAllHotels()
         {
             var hotelsList = _hotelReadRepository.GetAllByExpression(hotel => hotel.IsDeleted == false, int.MaxValue, 0);
@@ -96,7 +103,6 @@ namespace HMS.Persistence.Implementations.Services
             //}
             //return hotelGetDtos; 
         }
-
         public async Task<PaginatedResult<HotelGetDto>> GetHotelsPaginated(int page, int pageSize)
         {
             var query = _hotelReadRepository.GetAllByExpressionOrderBy
@@ -115,25 +121,34 @@ namespace HMS.Persistence.Implementations.Services
             };
             return paginatedResult;
         }
-
         public async Task UpdateHotelById(Guid id, HotelUpdateDto hotelUpdateDto)
         {
             if (id == Guid.Empty) throw new ArgumentNullException();
             var hotel = await _hotelReadRepository.GetByIdAsync(id);
         }
-
         public async Task DeleteHotel(Guid id)
         {
             if(id == Guid.Empty) { throw new ArgumentNullException(); }
-            var hotel = await _hotelReadRepository.GetByExpressionAsync(hotel => hotel.Id ==  id, true, "Policies");
+            var hotel = await _hotelReadRepository.GetByExpressionAsync(hotel => hotel.Id ==  id, true, "Policies", "Manager");
             if(hotel != null) 
             {
                 hotel.IsDeleted = true;
                 hotel.Policies.IsDeleted = true;
+                hotel.Manager.Hotel = null;
                 await _hotelWriteRepository.SaveChangeAsync(); 
                 return; 
             }
             throw new NotFoundException($"Hotel with {id} has not been found");
+        }
+
+        public async Task<bool> CheckManagerRegisteredHotel(string appUserId)
+        {
+            if (string.IsNullOrEmpty(appUserId)) {
+                _logger.LogError("Given parameter is null or empty");
+                throw new ArgumentNullException($"{appUserId} Given User ID is not valid"); }
+            var result = await _hotelManagerReadRepository.GetByExpressionAsync(hotelManager => hotelManager.AppUserId == appUserId && hotelManager.Hotel == null);
+            if (result != null) { return true; }
+            return false;
         }
     }
 }
